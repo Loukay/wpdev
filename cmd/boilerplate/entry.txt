@@ -1,0 +1,22 @@
+<?php
+/**
+ * Plugin Name:       {{.Name}}
+ * Plugin URI:        {{.URL}}
+ * Description:       {{.Description}}
+ * Version:           {{.Version}}
+ * Author:            {{.Author}}
+ * Author URI:        {{.AuthorURL}}
+ * Text Domain:       {{.Directory}}
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+define( '{{.Prefix}}_PATH',  plugin_dir_path( __FILE__ ) );
+define( '{{.Prefix}}_DIR', plugin_dir_url( __FILE__ ) );
+define( '{{.Prefix}}_FILE', __FILE__ );
+
+// Load the Composer autoloader
+require_once WPW_PATH . 'vendor/autoload.php';
+
+// Create an insance of the plugin main class
+{{.Namespace}}\Main::instance();

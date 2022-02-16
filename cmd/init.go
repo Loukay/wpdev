@@ -1,44 +1,100 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"embed"
+	"fmt"
+	"os"
 
-	"github.com/manifoldco/promptui"
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/spf13/cobra"
 )
 
 //go:embed boilerplate/*
 var boilerplateFiles embed.FS
 
-var pluginInitQuestions = []promptui.Prompt{
+// InitAnswers holds the answers entered by the user
+type InitAnswers struct {
+	Name        string
+	Directory   string
+	Author      string
+	Description string
+	URL         string
+	AuthorURL   string
+	Version     string
+	Prefix      string
+	Support     []string
+}
+
+var initQuestions = []*survey.Question{
 	{
-		Label:   "Plugin name",
-		Default: "My Plugin",
+		Name: "name",
+		Prompt: &survey.Input{
+			Message: "Enter a name for your plugin:",
+			Default: "My Plugin",
+		},
 	},
 	{
-		Label:   "Plugin directory name",
-		Default: "my-plugin",
+		Name: "directory",
+		Prompt: &survey.Input{
+			Message: "Enter the plugin's directory name:",
+			Default: "my-plugin",
+		},
 	},
 	{
-		Label: "Plugin author",
+		Name: "prefix",
+		Prompt: &survey.Input{
+			Message: "Enter a prefix for the plugin's global functions:",
+			Default: "my-plugin",
+		},
 	},
 	{
-		Label:   "Plugin description",
-		Default: "A plugin I made myself!",
+		Name: "description",
+		Prompt: &survey.Input{
+			Message: "Enter a description for your plugin:",
+		},
 	},
 	{
-		Label: "Plugin URL",
+		Name: "URL",
+		Prompt: &survey.Input{
+			Message: "Enter the plugin's website:",
+		},
 	},
 	{
-		Label: "Plugin author URL",
+		Name: "author",
+		Prompt: &survey.Input{
+			Message: "Enter the plugin's author:",
+		},
 	},
 	{
-		Label:   "Plugin version",
-		Default: "1.0",
+		Name: "authorURL",
+		Prompt: &survey.Input{
+			Message: "Enter the author's website:",
+		},
+	},
+	{
+		Name: "version",
+		Prompt: &survey.Input{
+			Message: "Enter the plugin's initial version:",
+			Default: "1.0",
+		},
+	},
+	{
+		Name: "version",
+		Prompt: &survey.Input{
+			Message: "Enter the plugin's initial version:",
+			Default: "1.0",
+		},
+	},
+	{
+		Name: "support",
+		Prompt: &survey.MultiSelect{
+			Message: "Choose what to include in your plugin:",
+			Options: []string{
+				"Custom page templates",
+				"Extending the REST API",
+				"Custom post types",
+			},
+		},
 	},
 }
 
@@ -59,9 +115,18 @@ var initCmd = &cobra.Command{
 
 func Run(cmd *cobra.Command, args []string) {
 
-	for _, prompt := range pluginInitQuestions {
-		prompt.Run()
+	var answers InitAnswers
+
+	err := survey.Ask(initQuestions, &answers)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
 	}
+
+	fmt.Printf("Answers: %+v", answers)
+
+	err = os.Mkdir(answers.Directory, 0755)
 
 }
 
